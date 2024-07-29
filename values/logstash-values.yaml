@@ -1,0 +1,64 @@
+persistence:
+  enabled: true
+
+volumeClaimTemplate:
+  storageClassName: gp2
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 1Gi
+
+logstashConfig:
+  logstash.yml: |
+    http.host: 0.0.0.0
+    xpack.monitoring.enabled: false
+
+logstashPipeline: 
+ logstash.conf: |
+    input {
+      beats {
+        port => 5044
+      }
+    }
+
+    filter {
+      grok {
+        match => { "message" => "%{IPORHOST:client_ip} - - \[%{HTTPDATE:timestamp}\] \"%{WORD:method} %{URIPATHPARAM:request} HTTP/%{NUMBER:http_version}\" %{NUMBER:response_code} %{NUMBER:bytes} \"%{DATA:referrer}\" \"%{DATA:user_agent}\" \"%{DATA:forwarded_for}\" \"%{DATA:upstream_address}\" \"%{DATA:upstream_code}\"" }
+      }
+
+      date {
+        match => [ "timestamp", "dd/MMM/yyyy:HH:mm:ss Z" ]
+        target => "@timestamp"
+      }
+
+      if [user_agent] == "kube-probe/1.28" {
+        drop { }
+      }
+    }
+
+    output {
+      elasticsearch {
+        hosts => ["https://elasticsearch-master.elk.svc.cluster.local:9200"]
+
+        ssl => true 
+        ssl_certificate_verification => false 
+
+        user=> "elastic"
+        password => "ZHLDNhGvk5vL02Rm"
+
+        manage_template => false
+        index => "nginx-logs-%{+YYYY.MM.dd}"
+      }
+    }
+
+service:
+type: ClusterIP
+ports:
+  - name: beats
+    port: 5044
+    protocol: TCP
+    targetPort: 5044
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080

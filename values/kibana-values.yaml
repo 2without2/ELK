@@ -1,0 +1,7 @@
+elasticsearchHosts: "https://elasticsearch-master:9200"
+
+elasticsearch.ssl.verificationMode: "none"
+
+service:
+  type: NodePort
+  nodePort: 32004

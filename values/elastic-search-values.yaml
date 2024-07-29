@@ -1,0 +1,28 @@
+replicas: 1
+minimumMasterNodes: 1
+
+service:
+  type: NodePort
+
+volumeClaimTemplate:
+  storageClassName: gp2
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 10Gi
+
+persistence:
+  enabled: true
+  labels:
+    # Add default labels for the volumeClaimTemplate of the StatefulSet
+    enabled: true
+  annotations: {}
+
+readinessProbe:
+  failureThreshold: 3
+  initialDelaySeconds: 120
+  periodSeconds: 10
+  successThreshold: 3
+  timeoutSeconds: 5
+
+clusterHealthCheckParams: "wait_for_status=yellow&timeout=50s"
