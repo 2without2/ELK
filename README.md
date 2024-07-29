@@ -53,7 +53,7 @@ kubectl get secrets --namespace=elk elasticsearch-master-credentials -ojsonpath=
 ```yaml
 
 ```
-#### Инстальруем Kibana с помошью Helm
+#### Инсталируем Kibana с помошью Helm
 ```bash
 helm install kibana elastic/kibana -f kibana-valyes.yaml -n elk
 ```
@@ -63,7 +63,7 @@ helm install kibana elastic/kibana -f kibana-valyes.yaml -n elk
 ```yaml
 
 ```
-#### Инстальруем Logstash с помошью Helm
+#### Инсталируем Logstash с помошью Helm
 ```bash
 helm install logstash elastic/logstash -f logstash-values.yaml -n elk
 ```
@@ -73,7 +73,7 @@ helm install logstash elastic/logstash -f logstash-values.yaml -n elk
 ```yaml
 
 ```
-#### Инстальруем Filebeat с помошью Helm
+#### Инсталируем Filebeat с помошью Helm
 ```bash
 helm install filebeat elastic/filebeat -f filebeat-values.yaml -n elk
 ```
